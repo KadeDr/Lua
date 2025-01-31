@@ -155,11 +155,11 @@ Back = function(player)
 
     if playerCurrentStage.Value == 1 then
         playerCurrentStage.Value = playerStage.Value
-        SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage)
     else
         playerCurrentStage.Value -= 1
-        SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage)
     end
+    SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage)
+    SendText(player, playerCurrentStage)
 end
 
 Forward = function(player)
@@ -168,11 +168,11 @@ Forward = function(player)
 
     if playerCurrentStage.Value == playerStage.Value then
         playerCurrentStage.Value = 1
-        SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage)
     else
         playerCurrentStage.Value += 1
-        SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage)
     end
+    SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage)
+    SendText(player, playerCurrentStage)
 end
 
 task.spawn(AnchorCheckpoints)
