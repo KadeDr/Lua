@@ -45,6 +45,8 @@ checkpointsModule.Events = function()
                 stage.Value = data
                 tempStage.Value = data
             end
+        else
+            print("Save Config is disabled")
         end
     
         SendText(player, tempStage)
@@ -63,6 +65,8 @@ checkpointsModule.Events = function()
     game.Players.PlayerRemoving:Connect(function(player)
         if configs["Save"] then
             SaveData(player)
+        else
+            print("Save Config is disabled")
         end
     end)
 
