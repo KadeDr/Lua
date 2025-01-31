@@ -48,7 +48,11 @@ checkpointsModule.Events = function()
         SendText(player, tempStage)
 
         player.CharacterAdded:Connect(function(character)
-            SpawnCharacter(character, tempStage)
+            if configs["TemporaryStageSpawn"] then
+                SpawnCharacter(character, tempStage)
+            else
+
+            end
         end)
     
         task.spawn(CycleStages)
@@ -133,8 +137,8 @@ LoadData = function(player)
     end
 end
 
-SpawnCharacter = function(character, tempStage)
-    character:FindFirstChild("HumanoidRootPart").CFrame = checkpoints:FindFirstChild(tempStage.Value).CFrame + Vector3.new(0, 2, 0)
+SpawnCharacter = function(character, stage)
+    character:FindFirstChild("HumanoidRootPart").CFrame = checkpoints:FindFirstChild(stage.Value).CFrame + Vector3.new(0, 2, 0)
 end
 
 Back = function(player)
