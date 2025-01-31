@@ -2,12 +2,16 @@ local dataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local obbyDataStore = dataStoreService:GetDataStore("ObbyDataStore")
 
+local configs = require(game.ReplicatedStorage.Shared.CheckpointConfigs)
+
 local checkpoints = workspace.Checkpoints
 local checkpointsEvent = game.ReplicatedStorage.RemoteEvents.Checkpoints
+local checkpointsFunction = game.ReplicatedStorage.RemoteFunctions.Checkpoints
 
 local CycleStages
 local CheckStageRequirements
 local AnchorCheckpoints
+local SendText
 local SaveData
 local LoadData
 local SpawnCharacter
@@ -25,9 +29,15 @@ checkpointsModule.Events = function()
         stage.Name = "Stage"
         stage.Value = 1
 
-        local tempStage = Instance.new("IntValue", stage)
-        tempStage.Name = "TempStage"
-        tempStage.Value = 1
+        local tempStage
+
+        if configs["TemporaryStage"] then
+            tempStage = Instance.new("IntValue", stage)
+            tempStage.Name = "TempStage"
+            tempStage.Value = 1
+        else
+            tempStage = stage
+        end
 
         local data = LoadData(player)
         if data ~= nil or data ~= 0 then
@@ -35,6 +45,8 @@ checkpointsModule.Events = function()
             tempStage.Value = data
         end
     
+        SendText(player, tempStage)
+
         player.CharacterAdded:Connect(function(character)
             SpawnCharacter(character, tempStage)
         end)
@@ -53,6 +65,10 @@ checkpointsModule.Events = function()
             Forward(player)
         end
     end)
+
+    checkpointsFunction.OnServerInvoke = function(player)
+        
+    end
 end
 
 CycleStages = function()
@@ -69,9 +85,15 @@ CheckStageRequirements = function(stage, hit)
     if not hit.Parent:FindFirstChild("Humanoid") then return end
     if hit.Parent:FindFirstChild("Humanoid").Health <= 0 then return end
     local playerStage = game.Players:FindFirstChild(hit.Parent.Name).leaderstats.Stage
-    local playerTempStage = playerStage.TempStage
-    playerTempStage.Value = stage.Name
-    checkpointsEvent:FireClient(game.Players:FindFirstChild(hit.Parent.Name), playerTempStage)
+    if Players:FindFirstChild("TempStage") then
+        playerStage.TempStage.Value = stage.Name
+        checkpointsEvent:FireClient(game.Players:FindFirstChild(hit.Parent.Name), playerStage.TempStage)
+    else
+        if playerStage.Value ~= tonumber(stage.Name) - 1 then return end
+        playerStage.Value = stage.Name
+        checkpointsEvent:FireClient(game.Players:FindFirstChild(hit.Parent.Name), playerStage)
+        return
+    end
     if playerStage.Value ~= tonumber(stage.Name) - 1 then return end
     playerStage.Value = stage.Name
 end
@@ -82,6 +104,10 @@ AnchorCheckpoints = function()
             stage.Anchored = true
         end
     end
+end
+
+SendText = function(player, stage)
+    checkpointsEvent:FireClient(game.Players:FindFirstChild(player.Name), stage)
 end
 
 SaveData = function(player)
