@@ -31,7 +31,7 @@ checkpointsModule.Events = function()
 
         local tempStage
 
-        if configs["TemporaryStage"] then
+        if configs.TemporaryStage.Enabled then
             tempStage = Instance.new("IntValue", stage)
             tempStage.Name = "TempStage"
             tempStage.Value = 1
@@ -39,7 +39,7 @@ checkpointsModule.Events = function()
             tempStage = stage
         end
 
-        if configs["Save"] then
+        if configs["Stage"] then
                 local data = LoadData(player)
             if data ~= nil or data ~= 0 then
                 stage.Value = data
@@ -52,7 +52,7 @@ checkpointsModule.Events = function()
         SendText(player, tempStage)
 
         player.CharacterAdded:Connect(function(character)
-            if configs["TemporaryStageSpawn"] then
+            if configs["TemporaryStage"]["SpawnOnTempStage"] then
                 SpawnCharacter(character, tempStage)
             else
                 SpawnCharacter(character, stage)
@@ -77,10 +77,6 @@ checkpointsModule.Events = function()
             Forward(player)
         end
     end)
-
-    checkpointsFunction.OnServerInvoke = function(player)
-        
-    end
 end
 
 CycleStages = function()
@@ -97,7 +93,7 @@ CheckStageRequirements = function(stage, hit)
     if not hit.Parent:FindFirstChild("Humanoid") then return end
     if hit.Parent:FindFirstChild("Humanoid").Health <= 0 then return end
     local playerStage = game.Players:FindFirstChild(hit.Parent.Name).leaderstats.Stage
-    if Players:FindFirstChild("TempStage") and configs["TemporaryStageUpdate"] then
+    if Players:FindFirstChild("TempStage") and configs["TemporaryStage"]["TempStageUpdate"] then
         playerStage.TempStage.Value = stage.Name
         checkpointsEvent:FireClient(game.Players:FindFirstChild(hit.Parent.Name), playerStage.TempStage)
     else
