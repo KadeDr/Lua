@@ -1,12 +1,10 @@
 local dataStoreService = game:GetService("DataStoreService")
-local Players = game:GetService("Players")
 local obbyDataStore = dataStoreService:GetDataStore("ObbyDataStore")
 
 local configs = require(game.ReplicatedStorage.Shared.CheckpointConfigs)
 
 local checkpoints = workspace.Checkpoints
 local checkpointsEvent = game.ReplicatedStorage.RemoteEvents.Checkpoints
-local checkpointsFunction = game.ReplicatedStorage.RemoteFunctions.Checkpoints
 
 local CycleStages
 local CheckStageRequirements
@@ -24,7 +22,7 @@ checkpointsModule.Events = function()
     game.Players.PlayerAdded:Connect(function(player)
         local leaderstats = Instance.new("Folder", player)
         leaderstats.Name = "leaderstats"
-    
+
         local stage = Instance.new("IntValue", leaderstats)
         stage.Name = "Stage"
         stage.Value = 1
@@ -39,7 +37,7 @@ checkpointsModule.Events = function()
             tempStage = stage
         end
 
-        if configs["Stage"] then
+        if configs["Save"] then
                 local data = LoadData(player)
             if data ~= nil or data ~= 0 then
                 stage.Value = data
@@ -48,17 +46,17 @@ checkpointsModule.Events = function()
         else
             print("Save Config is disabled")
         end
-    
-        SendText(player, tempStage)
 
         player.CharacterAdded:Connect(function(character)
             if configs["TemporaryStage"]["SpawnOnTempStage"] then
                 SpawnCharacter(character, tempStage)
+                SendText(player, tempStage)
             else
                 SpawnCharacter(character, stage)
+                SendText(player, stage)
             end
         end)
-    
+
         task.spawn(CycleStages)
     end)
 
@@ -91,9 +89,9 @@ end
 
 CheckStageRequirements = function(stage, hit)
     if not hit.Parent:FindFirstChild("Humanoid") then return end
-    if hit.Parent:FindFirstChild("Humanoid").Health <= 0 then return end
+    if hit.Parent:FindFirstChild("Humanoid").Health <= 0 and not configs["AdvanceOnDeath"] then return end
     local playerStage = game.Players:FindFirstChild(hit.Parent.Name).leaderstats.Stage
-    if Players:FindFirstChild("TempStage") and configs["TemporaryStage"]["TempStageUpdate"] then
+    if playerStage:FindFirstChild("TempStage") and configs["TemporaryStage"]["UpdateTempStage"] then
         playerStage.TempStage.Value = stage.Name
         checkpointsEvent:FireClient(game.Players:FindFirstChild(hit.Parent.Name), playerStage.TempStage)
     else

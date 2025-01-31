@@ -1,7 +1,7 @@
 local configs = require(game.ReplicatedStorage.Shared.CheckpointConfigs)
 
 local checkpointsEvent = game.ReplicatedStorage.RemoteEvents.Checkpoints
-local stageMainFrame = configs.TemporaryStage.Filepath
+local stageMainFrame = game.Players.LocalPlayer.PlayerGui:WaitForChild("Stage").MainFrame
 local stageText = stageMainFrame.StageText
 local backButton = stageMainFrame.Back
 local forwardButton = stageMainFrame.Forward
@@ -14,10 +14,10 @@ checkpointsModule.Events = function()
     end)
     if configs.TemporaryStage then
         backButton.MouseButton1Click:Connect(function()
-            checkpointsEvent:InvokeServer("Back")
+            checkpointsEvent:FireServer("Back")
         end)
         forwardButton.MouseButton1Click:Connect(function()
-            checkpointsEvent:InvokeServer("Forward")
+            checkpointsEvent:FireServer("Forward")
         end)
     else
         backButton.Visible = false
