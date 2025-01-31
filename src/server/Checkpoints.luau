@@ -39,10 +39,12 @@ checkpointsModule.Events = function()
             tempStage = stage
         end
 
-        local data = LoadData(player)
-        if data ~= nil or data ~= 0 then
-            stage.Value = data
-            tempStage.Value = data
+        if configs["Save"] then
+                local data = LoadData(player)
+            if data ~= nil or data ~= 0 then
+                stage.Value = data
+                tempStage.Value = data
+            end
         end
     
         SendText(player, tempStage)
@@ -89,7 +91,7 @@ CheckStageRequirements = function(stage, hit)
     if not hit.Parent:FindFirstChild("Humanoid") then return end
     if hit.Parent:FindFirstChild("Humanoid").Health <= 0 then return end
     local playerStage = game.Players:FindFirstChild(hit.Parent.Name).leaderstats.Stage
-    if Players:FindFirstChild("TempStage") then
+    if Players:FindFirstChild("TempStage") and configs["TemporaryStageUpdate"] then
         playerStage.TempStage.Value = stage.Name
         checkpointsEvent:FireClient(game.Players:FindFirstChild(hit.Parent.Name), playerStage.TempStage)
     else
