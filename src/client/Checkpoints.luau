@@ -1,7 +1,7 @@
 local configs = require(game.ReplicatedStorage.Shared.CheckpointConfigs)
 
 local checkpointsEvent = game.ReplicatedStorage.RemoteEvents.Checkpoints
-local stageMainFrame = game.Players.LocalPlayer.PlayerGui:WaitForChild("Stage").MainFrrame
+local stageMainFrame = configs.TemporaryStage.Filepath
 local stageText = stageMainFrame.StageText
 local backButton = stageMainFrame.Back
 local forwardButton = stageMainFrame.Forward
