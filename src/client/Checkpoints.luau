@@ -14,10 +14,10 @@ checkpointsModule.Events = function()
     end)
     if configs.TemporaryStage then
         backButton.MouseButton1Click:Connect(function()
-            checkpointsEvent:FireServer("Back")
+            checkpointsEvent:InvokeServer("Back")
         end)
         forwardButton.MouseButton1Click:Connect(function()
-            checkpointsEvent:FireServer("Forward")
+            checkpointsEvent:InvokeServer("Forward")
         end)
     else
         backButton.Visible = false
