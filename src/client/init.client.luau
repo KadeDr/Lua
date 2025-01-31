@@ -1,1 +1,3 @@
-print("Hello world, from client!")
+local checkpointsModule = require(script.Checkpoints)
+
+checkpointsModule.Events()

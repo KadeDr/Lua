@@ -1,5 +1,3 @@
-workspace.Part.Touched:Connect(function(hit)
-    if hit.Parent:FindFirstChild("Humanoid") then
-        workspace.Part.CanCollide = false
-    end
-end)
+local checkpoints = require(script.Checkpoints)
+
+checkpoints.Events()
