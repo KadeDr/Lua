@@ -51,7 +51,7 @@ checkpointsModule.Events = function()
             if configs["TemporaryStageSpawn"] then
                 SpawnCharacter(character, tempStage)
             else
-
+                SpawnCharacter(character, stage)
             end
         end)
     
