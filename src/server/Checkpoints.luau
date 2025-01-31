@@ -61,7 +61,9 @@ checkpointsModule.Events = function()
     end)
 
     game.Players.PlayerRemoving:Connect(function(player)
-        SaveData(player)
+        if configs["Save"] then
+            SaveData(player)
+        end
     end)
 
     checkpointsEvent.OnServerEvent:Connect(function(player, event)
