@@ -30,6 +30,7 @@ checkpointsModule.Events = function()
         local tempStage
 
         if configs.TemporaryStage.Enabled then
+            print("Temp stage exists")
             tempStage = Instance.new("IntValue", stage)
             tempStage.Name = "TempStage"
             tempStage.Value = 1
@@ -40,8 +41,15 @@ checkpointsModule.Events = function()
         if configs["Save"] then
                 local data = LoadData(player)
             if data ~= nil or data ~= 0 then
+                print("Data Found")
+                print(data)
                 stage.Value = data
+                print("Stage value added")
                 tempStage.Value = data
+                print("Temp stage value added")
+            else
+                stage.Value = 1
+                tempStage.Value = 1
             end
         else
             print("Save Config is disabled")
@@ -49,10 +57,10 @@ checkpointsModule.Events = function()
 
         player.CharacterAdded:Connect(function(character)
             if configs["TemporaryStage"]["SpawnOnTempStage"] then
-                SpawnCharacter(character, tempStage)
+                SpawnCharacter(workspace:FindFirstChild(player.Name), tempStage.Value)
                 SendText(player, tempStage)
             else
-                SpawnCharacter(character, stage)
+                SpawnCharacter(workspace:FindFirstChild(player.Name), stage.Value)
                 SendText(player, stage)
             end
         end)
@@ -133,17 +141,23 @@ LoadData = function(player)
     end)
 
     if success then
+        if data == 0 or data == 1 then return 1 end
         return data
     else
+        print("Error on loading data")
         warn(errormessage)
     end
 end
 
 SpawnCharacter = function(character, stage)
-    character:FindFirstChild("HumanoidRootPart").CFrame = checkpoints:FindFirstChild(stage.Value).CFrame + Vector3.new(0, 2, 0)
+    print(character:FindFirstChild("HumanoidRootPart").CFrame)
+    print(workspace.Checkpoints:FindFirstChild(stage).CFrame)
+    character:FindFirstChild("HumanoidRootPart").CFrame = checkpoints:FindFirstChild(stage).CFrame + Vector3.new(0, 2, 0)
 end
 
 Back = function(player)
+    if not configs.TemporaryStage.Enabled then return end
+
     local playerStage = player.leaderstats.Stage
     local playerCurrentStage = playerStage.TempStage
 
@@ -152,11 +166,13 @@ Back = function(player)
     else
         playerCurrentStage.Value -= 1
     end
-    SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage)
+    SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage.Value)
     SendText(player, playerCurrentStage)
 end
 
 Forward = function(player)
+    if not configs.TemporaryStage.Enabled then return end
+
     local playerStage = player.leaderstats.Stage
     local playerCurrentStage = playerStage.TempStage
 
@@ -165,7 +181,7 @@ Forward = function(player)
     else
         playerCurrentStage.Value += 1
     end
-    SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage)
+    SpawnCharacter(workspace:FindFirstChild(player.Name), playerCurrentStage.Value)
     SendText(player, playerCurrentStage)
 end
 
